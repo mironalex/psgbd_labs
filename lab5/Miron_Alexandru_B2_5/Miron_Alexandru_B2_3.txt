@@ -1,0 +1,1 @@
+Pentru a optimiza scriptul de la ex 2, am creat un index pe tabela answers, coloanele user_id si solved
