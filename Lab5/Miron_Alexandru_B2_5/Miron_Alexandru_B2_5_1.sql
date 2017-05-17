@@ -1,4 +1,5 @@
 CREATE OR REPLACE PACKAGE lab5_actions AS
+  FUNCTION isLazy(stud_id INTEGER) RETURN INTEGER;
   FUNCTION isNotLazy(stud_id INTEGER) RETURN INTEGER;
   FUNCTION getRelevancy(q_id INTEGER) RETURN INTEGER;
   FUNCTION getRelevancy(stud_name VARCHAR2) RETURN INTEGER;
@@ -6,6 +7,25 @@ END lab5_actions;
 /
 CREATE OR REPLACE PACKAGE body lab5_actions AS
   FUNCTION isNotLazy(stud_id INTEGER)
+    RETURN INTEGER IS
+      status INTEGER;
+      total_given INTEGER;
+      answered INTEGER;
+  BEGIN
+
+    select count(id) into total_given from answers
+    where user_id = stud_id;
+
+    select count(id) into answered from answers
+    where user_id = stud_id and solved = 1;
+
+    if answered*2 < total_given then status := 0;
+    else status := 1;
+    end if;
+
+    RETURN status;
+  END isNotLazy;
+  FUNCTION isLazy(stud_id INTEGER)
     RETURN INTEGER IS 
       status INTEGER;
       total_given INTEGER;
@@ -18,12 +38,12 @@ CREATE OR REPLACE PACKAGE body lab5_actions AS
     select count(id) into answered from answers
     where user_id = stud_id and solved = 1;
     
-    if answered*2 < total_given then status := 0;
-    else status := 1;
+    if answered*2 < total_given then status := 1;
+    else status := 0;
     end if;
     
     RETURN status;
-  END isNotLazy;
+  END isLazy;
   FUNCTION getRelevancy(q_id INTEGER) 
     RETURN INTEGER
     IS 
